@@ -14,6 +14,7 @@ description: "Integrate your EcoDim Eco-Dim.07 via Zigbee2MQTT with whatever sma
 | Description | Zigbee & Z-wave dimmer  |
 | Exposes | light (state, brightness), effect, linkquality |
 | Picture | ![EcoDim Eco-Dim.07](../images/devices/Eco-Dim.07.jpg) |
+| White-label | iolloi ID-EU20FW09 |
 
 ## Notes
 
@@ -99,8 +100,8 @@ sensor:
   - platform: "mqtt"
     state_topic: "zigbee2mqtt/<FRIENDLY_NAME>"
     availability_topic: "zigbee2mqtt/bridge/state"
-    unit_of_measurement: "lqi"
     value_template: "{{ value_json.linkquality }}"
+    unit_of_measurement: "lqi"
     icon: "mdi:signal"
 ```
 {% endraw %}

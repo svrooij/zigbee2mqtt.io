@@ -12,7 +12,7 @@ description: "Integrate your Develco SMSZB-120 via Zigbee2MQTT with whatever sma
 | Model | SMSZB-120  |
 | Vendor  | Develco  |
 | Description | Smoke detector with siren |
-| Exposes | temperature, battery, smoke, battery_low, tamper, linkquality |
+| Exposes | temperature, battery, smoke, battery_low, test, warning, linkquality |
 | Picture | ![Develco SMSZB-120](../images/devices/SMSZB-120.jpg) |
 
 ## Notes
@@ -66,11 +66,18 @@ Value can be found in the published state on the `battery_low` property.
 It's not possible to read (`/get`) or write (`/set`) this value.
 If value equals `true` battery_low is ON, if `false` OFF.
 
-### Tamper (binary)
-Indicates whether the device is tampered.
-Value can be found in the published state on the `tamper` property.
+### Test (binary)
+Indicates whether the device is being tested.
+Value can be found in the published state on the `test` property.
 It's not possible to read (`/get`) or write (`/set`) this value.
-If value equals `true` tamper is ON, if `false` OFF.
+If value equals `true` test is ON, if `false` OFF.
+
+### Warning (composite)
+Can be set by publishing to `zigbee2mqtt/FRIENDLY_NAME/set` with payload `{"warning": {"mode": VALUE, "level": VALUE, "strobe": VALUE, "duration": VALUE}}`
+- `mode` (enum): Mode of the warning (sound effect). Allowed values: `stop`, `burglar`, `fire`, `emergency`, `police_panic`, `fire_panic`, `emergency_panic`
+- `level` (enum): Sound level. Allowed values: `low`, `medium`, `high`, `very_high`
+- `strobe` (binary): Turn on/off the strobe (light) during warning. Allowed values: `true` or `false`
+- `duration` (numeric): Duration in seconds of the alarm. 
 
 ### Linkquality (numeric)
 Link quality (signal strength).
@@ -90,16 +97,16 @@ sensor:
   - platform: "mqtt"
     state_topic: "zigbee2mqtt/<FRIENDLY_NAME>"
     availability_topic: "zigbee2mqtt/bridge/state"
-    unit_of_measurement: "°C"
     value_template: "{{ value_json.temperature }}"
+    unit_of_measurement: "°C"
     device_class: "temperature"
 
 sensor:
   - platform: "mqtt"
     state_topic: "zigbee2mqtt/<FRIENDLY_NAME>"
     availability_topic: "zigbee2mqtt/bridge/state"
-    unit_of_measurement: "%"
     value_template: "{{ value_json.battery }}"
+    unit_of_measurement: "%"
     device_class: "battery"
 
 binary_sensor:
@@ -124,7 +131,7 @@ binary_sensor:
   - platform: "mqtt"
     state_topic: "zigbee2mqtt/<FRIENDLY_NAME>"
     availability_topic: "zigbee2mqtt/bridge/state"
-    value_template: "{{ value_json.tamper }}"
+    value_template: "{{ value_json.test }}"
     payload_on: true
     payload_off: false
 
@@ -132,8 +139,8 @@ sensor:
   - platform: "mqtt"
     state_topic: "zigbee2mqtt/<FRIENDLY_NAME>"
     availability_topic: "zigbee2mqtt/bridge/state"
-    unit_of_measurement: "lqi"
     value_template: "{{ value_json.linkquality }}"
+    unit_of_measurement: "lqi"
     icon: "mdi:signal"
 ```
 {% endraw %}
